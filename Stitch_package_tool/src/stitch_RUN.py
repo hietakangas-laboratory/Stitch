@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 import logging
 import subprocess
+from glob import glob
 
 
 
@@ -31,10 +32,11 @@ class Stitch:
             .grid(row=3, column=2)
 
         # Creates the variable label for ImageJ path text
-        self.__imgj_path = StringVar()
-        self.__selectij = Label(self.__window, text=self.__imgj_path.get(),
-                                 bg='white', bd=2,
-                                 textvariable=self.__imgj_path, relief='sunken')
+        try: ij_path = glob("C:\\[Hh]yapp\\Fiji.app\\ImageJ-win64.exe")[0]
+        except IndexError: ij_path = ""
+        self.__imgj_path = StringVar(value=ij_path)
+        self.__selectij = Label(self.__window, text=self.__imgj_path.get(), bg='white', bd=2,
+                                textvariable=self.__imgj_path, relief='sunken')
         self.__selectij.grid(row=3, column=3, columnspan=3, sticky=W)
 
         # Creates label for select folder prompt
