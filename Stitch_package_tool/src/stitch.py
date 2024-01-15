@@ -253,17 +253,15 @@ def read_positions(aurox_dir_path, dir_name):
     return positions_content
 
 
-def create_tile_configuration(tiff_files_names, tiff_img_positions, dir,
+def create_tile_configuration(tiff_files_names, tiff_img_positions, dirn,
                               mult_const):
     """
         Creates file TileConfiguration.txt from the positions.csv file.
     """
 
-    tile_conf_path = '%s/TileConfiguration.txt' % dir
+    tile_conf_path = '%s/TileConfiguration.txt' % dirn
     with open(tile_conf_path, 'w') as f:
         write_header(f)
-
-        tiff_files_names.sort()
         tiff_files_names.sort(key=len)
         l = list(zip(tiff_files_names, tiff_img_positions))
         for (name, pos) in l:
@@ -273,7 +271,7 @@ def create_tile_configuration(tiff_files_names, tiff_img_positions, dir,
                 name, h, w))
 
 
-def set_tile_configuration_z_axis_to_zero(dir):
+def set_tile_configuration_z_axis_to_zero(dirn):
     """
         Using the calculated overlap file (TileConfiguration.registered.txt)
         for linear blending causes z-axis overlap issues.
@@ -282,8 +280,8 @@ def set_tile_configuration_z_axis_to_zero(dir):
         for x and y but the z axis is reset to 0.
     """
 
-    configuration_name = '%s/TileConfiguration.registered.txt' % dir
-    conf_fixed_name = '%s/TileConfiguration.fixed.txt' % dir
+    configuration_name = '%s/TileConfiguration.registered.txt' % dirn
+    conf_fixed_name = '%s/TileConfiguration.fixed.txt' % dirn
 
     with open(configuration_name, 'rb') as f:
         with open(conf_fixed_name, 'w') as fw:
@@ -365,8 +363,7 @@ def process_aurox_image(aurox_dir_path, dir_name, yes_orig, mult_const):
         tiff_img_positions = read_positions(aurox_dir_path, dir_name)
 
         logging.info('Creating TileConfiguration.txt')
-        create_tile_configuration(tiff_files_names, tiff_img_positions,
-                                  aurox_dir_path, mult_const)
+        create_tile_configuration(tiff_files_names, tiff_img_positions, aurox_dir_path, mult_const)
 
         logging.info('Calculating overlap')
         calculate_overlap(aurox_dir_path)
@@ -375,8 +372,7 @@ def process_aurox_image(aurox_dir_path, dir_name, yes_orig, mult_const):
         set_tile_configuration_z_axis_to_zero(aurox_dir_path)
 
         logging.info('Creating fused/stitched image/s')
-        fusloc_dict = linear_blending(aurox_dir_path, current_dirs, c_ome_path,
-                                      yes_orig)
+        fusloc_dict = linear_blending(aurox_dir_path, current_dirs, c_ome_path, yes_orig)
 
         return fusloc_dict, omeloc_dict
 
@@ -495,8 +491,7 @@ def main(root_dir_path):
     else:
         ome_process = True
 
-    logging.info('Create fused from original positions (Fused.orig) = '
-                 + str(yes_orig))
+    logging.info('Create fused from original positions (Fused.orig) = ' + str(yes_orig))
     logging.info('Run imageJ macro = ' + str(yes_macro))
     logging.info('Run on companion.ome file only = ' + str(ome_process))
     logging.info('Multiplier value set as: ' + str(mult_const))
@@ -513,8 +508,8 @@ def main(root_dir_path):
         # Runs stitcher on companion.ome files only
         if ome_process:
             for root, dir_names, files in os.walk(root_dir_path):
-                for dir in dir_names:
-                    aurox_dir_path = os.path.join(root, dir)
+                for dirn in dir_names:
+                    aurox_dir_path = os.path.join(root, dirn)
                     dir_name = os.path.basename(aurox_dir_path)
                     fusloc_dict = process_aurox_ome_only(
                         aurox_dir_path, dir_name)
@@ -523,8 +518,8 @@ def main(root_dir_path):
         # Runs stitcher using selected parameters.
         else:
             for root, dir_names, files in os.walk(root_dir_path):
-                for dir in dir_names:
-                    aurox_dir_path = os.path.join(root, dir)
+                for dirn in dir_names:
+                    aurox_dir_path = os.path.join(root, dirn)
                     dir_name = os.path.basename(aurox_dir_path)
                     fusloc_dict, omeloc_dict = process_aurox_image(aurox_dir_path, dir_name, yes_orig, mult_const)
                     fus_tiffs_dict.update(fusloc_dict)
@@ -564,5 +559,5 @@ def main(root_dir_path):
 #@String multiplier
 #@String ome_only
 
-
-main(root_dir_path)
+if __name__ == "__main__":
+    main(root_dir_path)
