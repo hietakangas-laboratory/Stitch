@@ -28,7 +28,7 @@ if (is("composite")){ x = true;
 print(x);
 
 startSlice1 = 1;
-t = slices;
+t = nSlices();
 if (x && ch_no == 4){
     print("processing composite");
     print("performing 4ch macro");

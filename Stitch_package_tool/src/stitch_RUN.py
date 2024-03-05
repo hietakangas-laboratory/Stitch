@@ -11,10 +11,10 @@ class Stitch:
 
     def __init__(self):
         self.__py_file_dir = os.path.dirname(os.path.realpath(__file__))
-        self.__py_file = r"\stitch.py"
-        self.__py_file_loc = self.__py_file_dir + self.__py_file
-        self.__img_file = r"\stitch.gif"
-        self.__img_file_loc = self.__py_file_dir + self.__img_file
+        self.__py_file = "stitch.py"
+        self.__py_file_loc = os.path.join(self.__py_file_dir, self.__py_file)
+        self.__img_file = "stitch.gif"
+        self.__img_file_loc = os.path.join(self.__py_file_dir, self.__img_file)
 
 
         # Creates the structure for the GUI with the title

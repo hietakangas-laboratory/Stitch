@@ -423,13 +423,13 @@ def ij_macro_processor(fus_tiffs_dict, py_file_loc):
         if fus_tiffs_dict[key][0] == '':
             logging.info('Companion file not available for' + key)
             logging.info('Running imageJ macro on ' + key)
-            IJ.runMacroFile(stitch_path + r"\stitch_macro.ijm")
+            IJ.runMacroFile(os.path.join(stitch_path, "stitch_macro.ijm"))
             IJ.saveAs("tiff",
                       fus_tiffs_dict[key][1] + '/' + os.path.basename(key))
             IJ.run("Close All")
         else:
             logging.info('Running imageJ macro on ' + key)
-            IJ.runMacroFile(stitch_path + r"\stitch_macro.ijm",
+            IJ.runMacroFile(os.path.join(stitch_path, "stitch_macro.ijm"),
                             key + "<>" + fus_tiffs_dict[key][0])
             IJ.saveAs("tiff", fus_tiffs_dict[key][1] + '/'
                       + os.path.basename(key))
