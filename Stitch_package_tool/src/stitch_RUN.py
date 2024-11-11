@@ -68,7 +68,7 @@ class Stitch:
         self.__cb2.grid(row=8, column=1, sticky=W)
 
         # Creates the multiplier entry input field
-        self.__multi_prompt = Label(self.__window, text='Enter positions multiplier:').grid(row=9, column=1)
+        self.__multi_prompt = Label(self.__window, text='Enter positions multiplier (Use "." not ","):').grid(row=9, column=1)
         self.__multi_input = Entry(self.__window, width=5)
         self.__multi_input.grid(row=9, column=2, padx=5, ipadx=5)
 
@@ -78,11 +78,20 @@ class Stitch:
 
         self.__multi_errortxt = 'Multiplier input must be greater than 0!'
 
+         # Creates label for select ImageJ.exe prompt
+        self.__magnification_vals = Label(self.__window,
+                                   text='Magnifications and multiplier values '
+                                        '(Aurox):\n '
+                                        '10x - 1.56\n '
+                                        '20x - 3.1\n '
+                                        '63x - 4.9462') \
+            .grid(row=11, column=1)
+
         # Creates the run button for running the simulator
-        Button(self.__window, text='Run', command=self.stitch_away).grid(row=11, column=1, sticky=E)
+        Button(self.__window, text='Run', command=self.stitch_away).grid(row=12, column=1, sticky=E)
 
         # Creates button for quitting the stitcher
-        Button(self.__window, text='Quit', command=self.quit_func).grid(row=11, column=2, sticky=W)
+        Button(self.__window, text='Quit', command=self.quit_func).grid(row=12, column=2, sticky=W)
 
         # Adds the Stitch image
         Img = PhotoImage(file=self.__img_file_loc)
