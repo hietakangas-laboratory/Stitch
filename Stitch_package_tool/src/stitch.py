@@ -244,12 +244,36 @@ def read_positions(aurox_dir_path, dir_name):
     with open(positions_name, 'rb') as f:
         reader = csv.reader(f)
         positions_content = list(reader)
-    if all([int(v[2]) >= 0 for v in positions_content]):
+
+    y_flip = all([int(v[1]) >= 0 for v in positions_content])
+    x_flip = all([int(v[2]) >= 0 for v in positions_content])
+
+    if y_flip and x_flip:
+        positions_content = [[n, "-"+x, "-"+y] for (n, x, y) in positions_content]
+        max1 = max([int(v[1]) for v in positions_content])
+        min1 = min([int(v[1]) for v in positions_content])
+        offset1 = abs(min1) + abs(max1)
+        max2 = max([int(v[2]) for v in positions_content])
+        min2 = min([int(v[2]) for v in positions_content])
+        offset2 = abs(min2) + abs(max2)
+        
+        return [[n, str(int(x) + offset1), str(int(y) + offset2)] for (n, x, y) in positions_content]
+    
+    
+    elif y_flip:
         positions_content = [[n, x, "-"+y] for (n, x, y) in positions_content]
         max2 = max([int(v[2]) for v in positions_content])
         min2 = min([int(v[2]) for v in positions_content])
         offset2 = abs(min2) + abs(max2)
         return [[n, x, str(int(y) + offset2)] for (n, x, y) in positions_content]
+        
+    elif x_flip:
+        positions_content = [[n, "-"+x, y] for (n, x, y) in positions_content]
+        max1 = max([int(v[1]) for v in positions_content])
+        min1 = min([int(v[1]) for v in positions_content])
+        offset1 = abs(min1) + abs(max1)
+        return [[n, str(int(x) + offset1), y] for (n, x, y) in positions_content]
+    
     return positions_content
 
 
