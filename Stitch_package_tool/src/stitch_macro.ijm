@@ -1,3 +1,7 @@
+// Depending on how you mount guts to the slide, you need to change the oriention of the images accordingly. This is done for 4ch images on row 67, for 3ch on row 205, 2ch row 244, 1ch row 274
+// Options: run("Flip Horizontally", "stack") run("Flip Vertically", "stack") run("Flip 90 Degrees Right", "stack") run("Flip 90 Degrees Left", "stack") or add // to the beginning of the line to not flip at all.
+
+
 paths = getArgument()
 print(paths);
 
@@ -14,6 +18,10 @@ Ext.openImagePlus(companion_ome)
 getDimensions(width, height, channels, slices, frames)
 ch_no = channels 
 print(ch_no)
+getVoxelSize(width, height, depth, unit)
+w = width 
+h = height 
+d = depth 
 run("Close All")
 
 print(fused_tiff)
@@ -30,6 +38,9 @@ x = true;
 
 print(x);
 
+
+// 4 channels
+ 
 if (x && ch_no == 4){
 print("processing composite");
 print("performing 4ch macro");
@@ -53,6 +64,8 @@ Stack.setChannel(3);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(4);
 run("Enhance Contrast", "saturated=0.35");
+run("Rotate 90 Degrees Right");
+run("Properties...", "unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 print("done ptI");
 } else if (x && ch_no == 3){
 print("processing composite");
@@ -73,6 +86,8 @@ Stack.setChannel(2);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(3);
 run("Enhance Contrast", "saturated=0.35");
+run("Rotate 90 Degrees Right");
+run("Properties...", "unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x && ch_no == 2){
 print("processing composite");
 print("performing 2ch macro");
@@ -88,6 +103,8 @@ Stack.setChannel(1);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(2);
 run("Enhance Contrast", "saturated=0.35");
+run("Rotate 90 Degrees Right");
+run("Properties...", "unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x && ch_no == 1) {
 print("processing composite");
 print("performing 1ch macro");
@@ -96,6 +113,8 @@ run("Cyan");
 //run("Brightness/Contrast...");
 //run("Channels Tool...");
 run("Enhance Contrast", "saturated=0.35");
+run("Rotate 90 Degrees Right");
+run("Properties...", "unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x == 0 && ch_no == 4){
 print("performing 4ch macro");
 s = 1;
@@ -140,7 +159,12 @@ Stack.setChannel(3);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(4);
 run("Enhance Contrast", "saturated=0.35");
+//run("Rotate 90 Degrees Right");
+run("Properties...", "channels=4 slices="+i+" frames=1 unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x == 0 && ch_no == 3){
+
+// 3 channels
+
 print("performing 3ch macro");
 s = 1;
 t = nSlices();
@@ -178,8 +202,15 @@ Stack.setChannel(2);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(3);
 run("Enhance Contrast", "saturated=0.35");
+//run("Rotate 90 Degrees Right");
+run("Properties...", "channels=3 slices="+i+" frames=1 unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x == 0 && ch_no == 2){
 print("performing 2ch macro");
+
+
+// 2 channels
+
+
 s = 1;
 t = nSlices();
 i = t/2;
@@ -210,8 +241,15 @@ Stack.setChannel(1);
 run("Enhance Contrast", "saturated=0.35");
 Stack.setChannel(2);
 run("Enhance Contrast", "saturated=0.35");
+//run("Rotate 90 Degrees Right");
+run("Properties...", "channels=2 slices="+i+" frames=1 unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else if (x == 0 && ch_no == 1){
 print("performing 1ch macro");
+
+
+// 1 channel
+
+
 s = 1;
 t = nSlices();
 i = t;
@@ -233,6 +271,8 @@ run("Cyan");
 //run("Brightness/Contrast...");
 //run("Channels Tool...");
 run("Enhance Contrast", "saturated=0.35");
+//run("Rotate 90 Degrees Right");
+run("Properties...", "channels=1 slices="+i+" frames=1 unit=um pixel_width="+w+" pixel_height="+h+" voxel_depth="+d+"");
 } else {
 print("Macro could not be performed on " + fused_tiff)
 }

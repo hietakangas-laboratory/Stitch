@@ -3,8 +3,9 @@ from tkinter import *
 from tkinter import filedialog
 import logging
 import subprocess
+from glob import glob
 
-
+std_imagej_path = "C:\\[Hh]yapp\\Fiji.app\\ImageJ-win64.exe"
 
 class Stitch:
 
@@ -31,7 +32,7 @@ class Stitch:
             .grid(row=3, column=2)
 
         # Creates the variable label for ImageJ path text
-        try: ij_path = glob("C:\\[Hh]yapp\\Fiji.app\\ImageJ-win64.exe")[0]
+        try: ij_path = glob(std_imagej_path)[0]
         except IndexError: ij_path = None
         self.__imgj_path = StringVar(value=ij_path)
         self.__selectij = Label(self.__window, text=self.__imgj_path.get(), bg='white', bd=2,

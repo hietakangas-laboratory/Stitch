@@ -3,6 +3,8 @@ import os
 import shutil
 import logging
 from ij import IJ
+from org.yaml.snakeyaml import Yaml
+from java.io import FileReader, FileWriter
 
 
 def create_directories(aurox_dir_path):
@@ -241,6 +243,20 @@ def read_positions(aurox_dir_path, dir_name):
         Read dir/{dir}.positions.csv. Returns a list of the content.
     """
     positions_name = '%s/%s.positions.csv' % (aurox_dir_path, dir_name)
+    
+    """
+        If no positions.csv found from the dir looks for 
+        .settings file and creates positions.csv
+    """
+    
+    if not os.path.exists(positions_name):
+        yaml_name = '%s/%s.settings' % (aurox_dir_path, dir_name)
+        
+        if os.path.exists(yaml_name):
+            convert_yaml_to_csv(yaml_name)
+        else:
+            print(".settings or .positions.csv file not found for %s" % (dir_name))
+            
     with open(positions_name, 'rb') as f:
         reader = csv.reader(f)
         positions_content = list(reader)
@@ -344,7 +360,7 @@ dim = 3
 
 def dir_checker(aurox_dir_path):
     """
-        Checks to make sure there is a positions.csv file as well as more than
+        Checks to make sure there is a positions.csv  or .settings file as well as more than
         one .tiff  file available in the directory. If so it sees this as an
         image directory and returns True.
     """
@@ -354,7 +370,7 @@ def dir_checker(aurox_dir_path):
     for file in os.listdir(aurox_dir_path):
         if file.endswith('.tiff'):
             value1 += 1
-        if file.endswith('positions.csv'):
+        if file.endswith('positions.csv') or file.endswith('settings'):
             value2 += 1
     if value1 > 1 and value2 > 0:
         status = True
@@ -486,6 +502,49 @@ def ome_transfer(root_dir_path):
                             shutil.move(ome_src, ome_p)
                 else:
                     logging.info('No leftover companion.ome files')
+
+# Function to replace tabs with spaces in the YAML file
+def fix_yaml_tabs(file_path):
+    with open(file_path, 'r') as file:
+        content = file.read()
+
+    # Replace tabs with spaces (e.g., 2 spaces per tab)
+    fixed_content = content.replace('\t', '  ')
+
+    # Save the fixed content back to the file
+    with open(file_path, 'w') as file:
+        file.write(fixed_content)
+
+
+# Function to convert the YAML data to CSV
+def convert_yaml_to_csv(yaml_file):
+    # First, fix any tabs in the YAML file
+    fix_yaml_tabs(yaml_file)
+
+    # Read the YAML file using SnakeYAML (Java YAML parser)
+    yaml = Yaml()
+    file =FileReader(yaml_file)
+    data = yaml.load(file)
+    file.close()
+    
+    # Prepare CSV data
+    positions = data.get('xy positions', [])
+    print(positions)
+    # Extract the directory and generate the new CSV filename
+    directory = os.path.dirname(yaml_file)
+    csv_filename = os.path.splitext(yaml_file)[0] + '.positions.csv'
+    csv_filepath = os.path.join(directory, csv_filename)
+    print(csv_filepath)
+
+    # Write the data to CSV
+    csvfile = FileWriter(csv_filepath)
+    writer = csv.writer(csvfile)
+    for position in positions:
+        writer.writerow([position['name'], position['posX'], position['posY']])
+    
+    csvfile.close()
+
+    
 
 
 def main(root_dir_path):
