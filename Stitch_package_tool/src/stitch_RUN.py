@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 import logging
 import subprocess
-
+from glob import glob
 
 
 class Stitch:
